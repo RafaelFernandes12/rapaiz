@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aula", "aula\aula.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modelo", "Modelo\Modelo.csproj", "{EFCB71A9-B2C8-45B9-BF63-94F57E774E67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistencia", "Persistencia\Persistencia.csproj", "{32FD4C31-1ABE-489A-A844-2FDD3D37B247}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servico", "Servico\Servico.csproj", "{CA2841D0-D880-4556-ACAE-BF2351DF6907}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{EFCB71A9-B2C8-45B9-BF63-94F57E774E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFCB71A9-B2C8-45B9-BF63-94F57E774E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFCB71A9-B2C8-45B9-BF63-94F57E774E67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32FD4C31-1ABE-489A-A844-2FDD3D37B247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32FD4C31-1ABE-489A-A844-2FDD3D37B247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32FD4C31-1ABE-489A-A844-2FDD3D37B247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32FD4C31-1ABE-489A-A844-2FDD3D37B247}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA2841D0-D880-4556-ACAE-BF2351DF6907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA2841D0-D880-4556-ACAE-BF2351DF6907}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA2841D0-D880-4556-ACAE-BF2351DF6907}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA2841D0-D880-4556-ACAE-BF2351DF6907}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

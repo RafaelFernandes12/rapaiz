@@ -1,5 +1,4 @@
-﻿using aula.App_Start.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,36 +6,25 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using System.Net;
 using Modelo.Cadastros;
+using Servico.Cadastros;
+using Servico.Tabelas;
 
 namespace aula.Controllers
 {
     public class ProdutosController : Controller
     {
-        private EFContext context = new EFContext();
-        //// GET: Produtos
-        //public ActionResult Index()
-        //{
-        //    return View(context.Produtos.OrderBy(c => c.Nome));
-        //}
+        // private EFContext context = new EFContext();
+        private ProdutoServico produtoServico = new ProdutoServico();
+        private CategoriaServico categoriaServico = new CategoriaServico();
+        private FabricanteServico fabricanteServico = new FabricanteServico();
 
-        // GET: Produtos
-        public ActionResult Index()
-        {
-            var produtos =
-            context.Produtos.Include(c => c.Categoria).Include(f => f.Fabricante).
-            OrderBy(n => n.Nome);
-            return View(produtos);
-        }
-
-        // GET: Produtos/Details/5
-        public ActionResult Details(long? id)
+        private ActionResult ObterVisaoProdutoPorId(long? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Produto produto = context.Produtos.Where(p => p.ProdutoId == id).
-            Include(c => c.Categoria).Include(f => f.Fabricante).First();
+            Produto produto = produtoServico.ObterProdutoPorId((long)id);
             if (produto == null)
             {
                 return HttpNotFound();
@@ -44,13 +32,62 @@ namespace aula.Controllers
             return View(produto);
         }
 
-        // GET: Produtos/Create
-        public ActionResult Create()
+        private void PopularViewBag(Produto produto = null)
         {
-            ViewBag.CategoriaId = new SelectList(context.Categorias.OrderBy(b => b.Nome),
-            "CategoriaId", "Nome");
-            ViewBag.FabricanteId = new SelectList(context.Fabricantes.OrderBy(b => b.Nome),
-            "FabricanteId", "Nome");
+            if (produto == null)
+            {
+                ViewBag.CategoriaId = new SelectList(categoriaServico.ObterCategoriasClassificadasPorNome(),
+                "CategoriaId", "Nome");
+                ViewBag.FabricanteId = new SelectList(fabricanteServico.ObterFabricantesClassificadosPorNome(),
+                "FabricanteId", "Nome");
+            }
+            else
+            {
+                ViewBag.CategoriaId = new SelectList(categoriaServico.ObterCategoriasClassificadasPorNome(),
+                "CategoriaId", "Nome", produto.CategoriaId);
+                ViewBag.FabricanteId = new SelectList(fabricanteServico.ObterFabricantesClassificadosPorNome(),
+                "FabricanteId", "Nome", produto.FabricanteId);
+            }
+        }
+
+        private ActionResult GravarProduto(Produto produto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    produtoServico.GravarProduto(produto);
+                    return RedirectToAction("Index");
+                }
+                return View(produto);
+            }
+            catch
+            {
+                return View(produto);
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------
+
+        // GET: Produtos
+        public ActionResult Index()
+        {
+            //var produtos =
+            //context.Produtos.Include(c => c.Categoria).Include(f => f.Fabricante).
+            // OrderBy(n => n.Nome);
+            return View(produtoServico.ObterProdutosClassificadosPorNome());
+        }
+
+        // GET: Produtos/Details/5
+        public ActionResult Details(long? id)
+        {
+            return ObterVisaoProdutoPorId(id);
+        }
+
+            // GET: Produtos/Create
+            public ActionResult Create()
+        {
+            PopularViewBag();
             return View();
         }
 
@@ -74,20 +111,8 @@ namespace aula.Controllers
         // GET: Produtos/Edit/5
         public ActionResult Edit(long? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Produto produto = context.Produtos.Find(id);
-            if (produto == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CategoriaId = new SelectList(context.Categorias.OrderBy(b => b.Nome), "CategoriaId",
-            "Nome", produto.CategoriaId);
-            ViewBag.FabricanteId = new SelectList(context.Fabricantes.OrderBy(b => b.Nome), "FabricanteId",
-            "Nome", produto.FabricanteId);
-            return View(produto);
+            PopularViewBag(produtoServico.ObterProdutoPorId((long)id));
+            return ObterVisaoProdutoPorId(id);
         }
 
         // POST: Produtos/Edit/5
@@ -113,21 +138,11 @@ namespace aula.Controllers
         // GET: Produtos/Delete/5
         public ActionResult Delete(long? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Produto produto = context.Produtos.Where(p => p.ProdutoId == id).
-            Include(c => c.Categoria).Include(f => f.Fabricante).First();
-            if (produto == null)
-            {
-                return HttpNotFound();
-            }
-            return View(produto);
+            return ObterVisaoProdutoPorId(id);
         }
 
-        // POST: Produtos/Delete/5
-        [HttpPost]
+            // POST: Produtos/Delete/5
+            [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
