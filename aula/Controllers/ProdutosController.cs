@@ -95,17 +95,7 @@ namespace aula.Controllers
         [HttpPost]
         public ActionResult Create(Produto produto)
         {
-            try
-            {
-                // TODO: Add insert logic here
-                context.Produtos.Add(produto);
-                context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View(produto);
-            }
+            return GravarProduto(produto);
         }
 
         // GET: Produtos/Edit/5
@@ -119,20 +109,7 @@ namespace aula.Controllers
         [HttpPost]
         public ActionResult Edit(Produto produto)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    context.Entry(produto).State = EntityState.Modified;
-                    context.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                return View(produto);
-            }
-            catch
-            {
-                return View(produto);
-            }
+            return GravarProduto(produto);
         }
 
         // GET: Produtos/Delete/5
@@ -141,15 +118,13 @@ namespace aula.Controllers
             return ObterVisaoProdutoPorId(id);
         }
 
-            // POST: Produtos/Delete/5
-            [HttpPost]
+        // POST: Produtos/Delete/5
+        [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
             {
-                Produto produto = context.Produtos.Find(id);
-                context.Produtos.Remove(produto);
-                context.SaveChanges();
+                Produto produto = produtoServico.EliminarProdutoPorId(id);
                 TempData["Message"] = "Produto " + produto.Nome.ToUpper() + " foi removido";
                 return RedirectToAction("Index");
             }

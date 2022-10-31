@@ -1,5 +1,4 @@
-﻿using aula.App_Start.Models;
-using Modelo.Tabelas;
+﻿using Modelo.Cadastros;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -7,30 +6,57 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Servico.Cadastros;
+using Servico.Tabelas;
+using Modelo.Tabelas;
 
 namespace aula.Controllers
+
+
 {
     public class CategoriasController : Controller
     {
-        private EFContext context = new EFContext();
+        // private EFContext context = new EFContext();
+        private CategoriaServico CategoriaServico = new CategoriaServico();
 
-        //private static IList<Categoria> categorias = new List<Categoria>()
-        //{
-        //new Categoria() { CategoriaId = 1, Nome = "Nootebooks"},
-        //new Categoria() { CategoriaId = 2, Nome = "Monitores"}
-        //};
+        private ActionResult ObterVisaoCategoriaPorId(long? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(
+                HttpStatusCode.BadRequest);
+            }
+            Categoria Categoria = CategoriaServico.ObterCategoriaPorId((long)id);
+            if (Categoria == null)
+            {
+                return HttpNotFound();
+            }
+            return View(Categoria);
+        }
+
+        private ActionResult GravarCategoria(Categoria Categoria)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    CategoriaServico.GravarCategoria(Categoria);
+                    return RedirectToAction("Index");
+                }
+                return View(Categoria);
+            }
+            catch
+            {
+                return View(Categoria);
+            } //a
+        }
 
         // GET: Categorias
         public ActionResult Index()
         {
-            return View(
-                //categorias
-                context.Categorias.OrderBy(c => c.Nome)
-                );
+            return View(CategoriaServico.ObterCategoriasClassificadasPorNome());
         }
-
         // GET: Create
-        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -39,101 +65,50 @@ namespace aula.Controllers
         // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Categoria categoria)
+        public ActionResult Create(Categoria Categoria)
         {
-            //categorias.Add(categoria);
-            context.Categorias.Add(categoria);
-            context.SaveChanges();
-            return RedirectToAction("Index");
+            return GravarCategoria(Categoria);
         }
-
-        // GET: Categorias/Edit/5
-        [HttpGet]
+        // GET: Edit
         public ActionResult Edit(long? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            Categoria categoria = context.Categorias.Find(id);
-
-            if (categoria == null)
-            {
-                return HttpNotFound();
-            }
-            return View(categoria);
+            return ObterVisaoCategoriaPorId(id);
         }
-
-        // POST: Categorias/Edit/5
+        // POST: Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Categoria categoria)
+        public ActionResult Edit(Categoria Categoria)
         {
-            if (ModelState.IsValid)
-            {
-                context.Entry(categoria).State = EntityState.Modified;
-                context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(categoria);
+            return GravarCategoria(Categoria);
         }
-
-        // GET: Categorias/Details/5
-        //public ActionResult Details(long? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Categoria categoria = context.Categorias.Find(id);
-        //    if (categoria == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(categoria);
-        //}
-
+        // GET: Details
         public ActionResult Details(long? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Categoria categoria = context.Categorias.Where(f => f.CategoriaId == id).
-            Include("Produtos.Fabricante").First();
-            if (categoria == null)
-            {
-                return HttpNotFound();
-            }
-            return View(categoria);
+            return ObterVisaoCategoriaPorId(id);
         }
 
-        // GET: Categorias/Delete/5
+
+
+        // GET: Delete
         public ActionResult Delete(long? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Categoria categoria = context.Categorias.Find(id);
-            if (categoria == null)
-            {
-                return HttpNotFound();
-            }
-            return View(categoria);
+            return ObterVisaoCategoriaPorId(id);
         }
-
-        // POST: Categorias/Delete/5
+        // POST: Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(long id)
         {
-            Categoria categoria = context.Categorias.Find(id);
-            context.Categorias.Remove(categoria);
-            context.SaveChanges();
-            TempData["Message"] = "Categoria " + categoria.Nome.ToUpper() + " foi removida";
-            return RedirectToAction("Index");
+            try
+            {
+                Categoria Categoria = CategoriaServico.EliminarCategoriaPorId(id);
+                TempData["Message"] = "Categoria " + Categoria.Nome.ToUpper() + " foi removido";
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
         }
     }
 }
