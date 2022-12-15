@@ -17,7 +17,6 @@ namespace Web_Application.Controllers
         private ProdutoServico produtoServico = new ProdutoServico();
         private CategoriaServico categoriaServico = new CategoriaServico();
         private FabricanteServico fabricanteServico = new FabricanteServico();
-
         private ActionResult ObterVisaoProdutoPorId(long? id)
         {
             if (id == null)

@@ -27,6 +27,11 @@
                     }
                     else
                     {
+                        // <div class="panel-body">
+                        //    <img class="img-thumbnail"
+                        //         src="@Url.Action("GetLogotipo", "Produtos",new { id = Model.ProdutoId })"
+                        //         style="display:block;margin-left:auto; margin-right:auto;" />
+                        //</div>
                         <div class="panel-body">
                             <img class="img-thumbnail"
                                  src="@Url.Action("GetLogotipo", "Produtos",new { id = Model.ProdutoId })"
@@ -40,6 +45,8 @@
 
                                 </label>
                             </div>
+                            <!-- @Html.ActionLink("Baixar o arquivo : " + Model.NomeArquivo, "DownloadArquivo", "Produtos", new { area = "Cadastros", id = Model.ProdutoId }, null) -->
+                            @Html.ActionLink("Baixar o arquivo : " + Model.NomeArquivo, "DownloadArquivo2", "Produtos", new { area = "Cadastros", id = Model.ProdutoId }, null)
                         </div>
                     }
                 </div>
